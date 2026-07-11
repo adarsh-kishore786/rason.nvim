@@ -1,19 +1,25 @@
 local M = {}
 
-local function hello(opts)
-  opts = opts or {}
+local function get_selected_text()
+  local mode = vim.api.nvim_get_mode().mode
 
-  if opts.name then
-    print("Hello " .. opts.name)
-  else
-    print("Hello friend")
-  end
+  local lines = vim.fn.getregion(
+    vim.fn.getpos("."),
+    vim.fn.getpos("v"),
+    { type = mode }
+  )
 
+  return table.concat(lines, "\n")
 end
 
-function M.setup(opts)
-  vim.keymap.set("n", "<leader>h", function ()
-    hello(opts)
+local function process()
+  local text = get_selected_text()
+  print(text)
+end
+
+function M.setup()
+  vim.keymap.set("x", "<leader>j", function ()
+    process()
   end)
 end
 
