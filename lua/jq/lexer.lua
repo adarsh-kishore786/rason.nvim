@@ -1,5 +1,6 @@
-local lexer = {}
 local LEXEMES = require("jq.lexemes")
+
+local lexer = {}
 local index = 1
 
 local matches = {
@@ -14,27 +15,40 @@ local matches = {
   [']'] = LEXEMES.RIGHT_SQUARE
 }
 
+local function is_at_end(text)
+  return index > #text
+end
+
 local function get_lexeme(text)
   local char = text:sub(index, index)
 
   if matches[char] ~= nil then
     index = index + 1
-    return matches[char]
+    return { [matches[char]] = char }
   end
 
-  while matches[char] == nil do
+  local start = index
+
+  while not is_at_end(text)
+    and char ~= ' '
+    and matches[char] == nil do
+
     index = index + 1
     char = text:sub(index, index)
   end
 
-  return LEXEMES.VAR
+  local var = text:sub(start, index-1)
+  return { [LEXEMES.VAR] = var }
 end
 
 function lexer.lex(text)
   local new_text = {}
 
-  while index <= #text do
-    if text[index] == ' ' then
+  while not is_at_end(text) do
+    local char = text:sub(index, index)
+
+    if char == ' ' then
+      index = index + 1
       goto continue
     end
     table.insert(new_text, get_lexeme(text))
@@ -42,7 +56,7 @@ function lexer.lex(text)
     ::continue::
   end
 
-  return table.concat(new_text)
+  return new_text
 end
 
 return lexer

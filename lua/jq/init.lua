@@ -1,4 +1,5 @@
 local lexer = require("jq.lexer")
+local rason = require("jq.rason")
 
 local M = {}
 
@@ -16,8 +17,8 @@ end
 
 local function process()
   local text = get_selected_text()
-  local parsed = lexer.lex(text)
-  print(parsed)
+  local lexed = lexer.lex(text)
+  print(rason.stringify(lexed))
 end
 
 function M.setup()
