@@ -1,5 +1,6 @@
 local lexer = require("jq.lexer")
 local rason = require("jq.rason")
+local logger = require("jq.logger")
 
 local M = {}
 
@@ -18,11 +19,12 @@ end
 local function process()
   local text = get_selected_text()
   local lexed = lexer.lex(text)
-  print(rason.stringify(lexed))
+  logger.info(rason.stringify(lexed))
 end
 
 function M.setup()
   vim.keymap.set("x", "<leader>j", function ()
+    logger.clear()
     process()
   end)
 end

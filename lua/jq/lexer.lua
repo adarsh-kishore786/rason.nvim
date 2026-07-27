@@ -30,7 +30,6 @@ local function get_lexeme(text)
   local start = index
 
   while not is_at_end(text)
-    and char ~= ' '
     and matches[char] == nil do
 
     index = index + 1
