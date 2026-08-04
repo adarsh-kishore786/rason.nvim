@@ -1,4 +1,6 @@
 local rason = {}
+
+local lexemes = require('jq.lexemes')
 local logger = require('jq.logger')
 
 rason.stringify = function(o, indent)
@@ -11,13 +13,20 @@ rason.stringify = function(o, indent)
 
   local s = ''
 
-  for _, v in pairs(o) do
+  for k, v in pairs(o) do
     s = s .. rason.stringify(v, indent)
-    if v == '{' then
+
+    if (
+      k == lexemes.COMMA or
+      k == lexemes.SEMI_COLON or
+      k == lexemes.COLON
+    ) then
       s = s .. '\n'
-    elseif v == '}' then
     end
   end
+
+  s = s .. ' '
+
   return s
 end
 
