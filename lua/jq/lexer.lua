@@ -10,6 +10,7 @@ local matches = {
   ['}'] = LEXEMES.RIGHT_CURLY,
   ['['] = LEXEMES.LEFT_SQUARE,
   [']'] = LEXEMES.RIGHT_SQUARE,
+  [';'] = LEXEMES.SEMI_COLON
 }
 
 local lexer = {}
@@ -61,13 +62,13 @@ end
 local function get_lexeme(text)
   local char = text:sub(index, index)
 
-  if (char == '\'' or char == '\"') then
-    return handle_string(text, char)
-  end
-
   if matches[char] ~= nil then
     index = index + 1
     return { [matches[char]] = char }
+  end
+
+  if (char == '\'' or char == '\"') then
+    return handle_string(text, char)
   end
 
   return handle_var(text, char)

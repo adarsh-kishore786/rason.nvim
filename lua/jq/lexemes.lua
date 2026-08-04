@@ -1,6 +1,7 @@
 local LEXEMES = {
   VAR = "var",
   COLON = ':',
+  SEMI_COLON = ';',
   EQUAL = '=',
   COMMA = ',',
   LEFT_BRACE = '(',
