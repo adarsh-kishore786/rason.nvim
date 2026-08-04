@@ -55,6 +55,7 @@ function lexer.lex(text)
     ::continue::
   end
 
+  index = 1
   return new_text
 end
 
