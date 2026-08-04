@@ -19,7 +19,7 @@ end
 local function process()
   local text = get_selected_text()
   local lexed = lexer.lex(text)
-  logger.info(rason.stringify(lexed))
+  logger.info('\n' .. rason.stringify(lexed))
 end
 
 function M.setup()

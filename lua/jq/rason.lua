@@ -5,7 +5,7 @@ rason.stringify = function(o, indent)
   indent = indent or 0
 
   if type(o) ~= 'table' then
-    logger.info(tostring(o) .. ' is type ' .. type(o))
+    logger.info('Token: ' .. tostring(o))
     return tostring(o)
   end
 
