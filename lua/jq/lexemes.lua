@@ -1,15 +1,9 @@
-local LEXEMES = {
-  VAR = "var",
-  COLON = ':',
-  SEMI_COLON = ';',
-  EQUAL = '=',
-  COMMA = ',',
-  LEFT_BRACE = '(',
-  RIGHT_BRACE = ')',
-  LEFT_CURLY = '{',
-  RIGHT_CURLY = '}',
-  LEFT_SQUARE = '[',
-  RIGHT_SQUARE = ']'
+local LEXEME_TYPE = {
+  VAR = 0,
+  DELIM = 1,
+  LEFT_BRACKET = 2,
+  RIGHT_BRACKET = 3,
+  EOF = 4,
 }
 
-return LEXEMES
+return LEXEME_TYPE

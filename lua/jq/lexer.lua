@@ -1,17 +1,4 @@
-local LEXEMES = require("jq.lexemes")
-
-local matches = {
-  [':'] = LEXEMES.COLON,
-  ['='] = LEXEMES.EQUAL,
-  [','] = LEXEMES.COMMA,
-  ['('] = LEXEMES.LEFT_BRACE,
-  [')'] = LEXEMES.RIGHT_BRACE,
-  ['{'] = LEXEMES.LEFT_CURLY,
-  ['}'] = LEXEMES.RIGHT_CURLY,
-  ['['] = LEXEMES.LEFT_SQUARE,
-  [']'] = LEXEMES.RIGHT_SQUARE,
-  [';'] = LEXEMES.SEMI_COLON
-}
+local LEXEME_TYPE = require("jq.lexemes")
 
 local lexer = {}
 local index = 1
@@ -27,6 +14,45 @@ local function is_whitespace(char)
   )
 end
 
+local function is_delimeter(char)
+  return (
+    char == ':' or
+    char == ';' or
+    char == '=' or
+    char == ','
+  )
+end
+
+local function is_left_bracket(char)
+  return (
+    char == '(' or
+    char == '{' or
+    char == '['
+  )
+end
+
+local function is_right_bracket(char)
+  return (
+    char == ')' or
+    char == '}' or
+    char == ']'
+  )
+end
+
+local function is_bitwise_or_logical(char)
+  return (
+    char == '|' or
+    char == '&'
+  )
+end
+
+local function peek(text)
+  if index+1 <= #text then
+    return text:sub(index+1, index+1)
+  end
+  return ''
+end
+
 local function handle_string(text, char)
   local start = index
 
@@ -37,18 +63,20 @@ local function handle_string(text, char)
     if (curr_char == char) then
       local str = text:sub(start, index)
       index = index + 1
-      return { [LEXEMES.VAR] = str }
+      return { [LEXEME_TYPE.VAR] = str }
     end
   end
 
-  return { [LEXEMES.VAR] = text:sub(start) }
+  return { [LEXEME_TYPE.VAR] = text:sub(start) }
 end
 
 local function handle_var(text, char)
   local start = index
 
   while not is_at_end(text)
-    and matches[char] == nil
+    and not is_delimeter(char)
+    and not is_left_bracket(char)
+    and not is_right_bracket(char)
     and not is_whitespace(char) do
 
     index = index + 1
@@ -56,15 +84,25 @@ local function handle_var(text, char)
   end
 
   local var = text:sub(start, index-1)
-  return { [LEXEMES.VAR] = var }
+  return { [LEXEME_TYPE.VAR] = var }
 end
 
 local function get_lexeme(text)
   local char = text:sub(index, index)
 
-  if matches[char] ~= nil then
+  if is_left_bracket(char) then
     index = index + 1
-    return { [matches[char]] = char }
+    return { [LEXEME_TYPE.LEFT_BRACKET] = char }
+  end
+
+  if is_right_bracket(char) then
+    index = index + 1
+    return { [LEXEME_TYPE.RIGHT_BRACKET] = char }
+  end
+
+  if is_delimeter(char) then
+    index = index + 1
+    return { [LEXEME_TYPE.DELIM] = char }
   end
 
   if (char == '\'' or char == '\"') then
@@ -93,6 +131,7 @@ function lexer.lex(text)
 
     ::continue::
   end
+  table.insert(new_text, { [LEXEME_TYPE.EOF] = "EOF" })
 
   reset()
   return new_text
