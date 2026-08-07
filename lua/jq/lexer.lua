@@ -18,7 +18,6 @@ local function is_delimeter(char)
   return (
     char == ':' or
     char == ';' or
-    char == '=' or
     char == ','
   )
 end
@@ -39,10 +38,11 @@ local function is_right_bracket(char)
   )
 end
 
-local function is_bitwise_or_logical(char)
+local function is_separator(char)
   return (
     char == '|' or
-    char == '&'
+    char == '&' or
+    char == '='
   )
 end
 
@@ -103,6 +103,15 @@ local function get_lexeme(text)
   if is_delimeter(char) then
     index = index + 1
     return { [LEXEME_TYPE.DELIM] = char }
+  end
+
+  if is_separator(char) then
+    if peek(text) == char then
+      index = index + 2
+      return { [LEXEME_TYPE.SEPARATOR] = char .. char }
+    end
+    index = index + 1
+    return { [LEXEME_TYPE.SEPARATOR] = char }
   end
 
   if (char == '\'' or char == '\"') then
