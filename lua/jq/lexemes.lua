@@ -1,10 +1,10 @@
 local LEXEME_TYPE = {
   VAR = 0,
   DELIM = 1,
-  SEPARATOR = 5,
   LEFT_BRACKET = 2,
   RIGHT_BRACKET = 3,
-  EOF = 4,
+  COLON = 4,
+  SEPARATOR = 5,
 }
 
 return LEXEME_TYPE

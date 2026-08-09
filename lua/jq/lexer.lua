@@ -16,7 +16,6 @@ end
 
 local function is_delimeter(char)
   return (
-    char == ':' or
     char == ';' or
     char == ','
   )
@@ -38,6 +37,7 @@ local function is_right_bracket(char)
   )
 end
 
+-- Separators are just like delimeters but they leave a space before themselves
 local function is_separator(char)
   return (
     char == '|' or
@@ -46,21 +46,34 @@ local function is_separator(char)
   )
 end
 
-local function peek(text)
-  if index+1 <= #text then
-    return text:sub(index+1, index+1)
+local function handle_separator(text, char)
+  local start = index
+  local curr_char = char;
+
+  while not is_at_end(text) do
+    index = index + 1
+    curr_char = text:sub(index, index)
+
+    if (curr_char ~= char) then
+      local str = text:sub(start, index-1)
+      return { [LEXEME_TYPE.SEPARATOR] = str }
+    end
   end
-  return ''
+
 end
 
 local function handle_string(text, char)
   local start = index
+  local char_before = ''
+  local curr_char = char
 
   while not is_at_end(text) do
     index = index + 1
-    local curr_char = text:sub(index, index)
 
-    if (curr_char == char) then
+    char_before = curr_char
+    curr_char = text:sub(index, index)
+
+    if (curr_char == char and char_before ~= '\\') then
       local str = text:sub(start, index)
       index = index + 1
       return { [LEXEME_TYPE.VAR] = str }
@@ -72,15 +85,16 @@ end
 
 local function handle_var(text, char)
   local start = index
+  local curr_char = char
 
   while not is_at_end(text)
-    and not is_delimeter(char)
-    and not is_left_bracket(char)
-    and not is_right_bracket(char)
-    and not is_whitespace(char) do
+    and not is_delimeter(curr_char)
+    and not is_left_bracket(curr_char)
+    and not is_right_bracket(curr_char)
+    and not is_whitespace(curr_char) do
 
     index = index + 1
-    char = text:sub(index, index)
+    curr_char = text:sub(index, index)
   end
 
   local var = text:sub(start, index-1)
@@ -89,6 +103,11 @@ end
 
 local function get_lexeme(text)
   local char = text:sub(index, index)
+
+  if char == ':' then
+    index = index + 1
+    return { [LEXEME_TYPE.COLON] = char }
+  end
 
   if is_left_bracket(char) then
     index = index + 1
@@ -106,12 +125,7 @@ local function get_lexeme(text)
   end
 
   if is_separator(char) then
-    if peek(text) == char then
-      index = index + 2
-      return { [LEXEME_TYPE.SEPARATOR] = char .. char }
-    end
-    index = index + 1
-    return { [LEXEME_TYPE.SEPARATOR] = char }
+    return handle_separator(text, char)
   end
 
   if (char == '\'' or char == '\"') then
@@ -140,7 +154,6 @@ function lexer.lex(text)
 
     ::continue::
   end
-  table.insert(new_text, { [LEXEME_TYPE.EOF] = "EOF" })
 
   reset()
   return new_text
