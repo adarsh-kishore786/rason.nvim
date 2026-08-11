@@ -2,6 +2,10 @@ local rason = {}
 
 local LEXEME_TYPE = require('jq.lexemes')
 
+local indent_step = function ()
+  return vim.fn.shiftwidth()
+end
+
 local no_space_character = function (k)
   return (
     k == LEXEME_TYPE.DELIM or
@@ -19,14 +23,16 @@ local no_newline_character = function (index, o)
     return true
   end
 
-  local k_next, _ = next(o[index+1])
+  local k, _ = next(o[index+1])
   return (
-    k_next == LEXEME_TYPE.DELIM or
-    k_next == LEXEME_TYPE.RIGHT_BRACKET
+    k == LEXEME_TYPE.DELIM or
+    k == LEXEME_TYPE.RIGHT_BRACKET
   )
 end
 
 local indentify = function (k)
+  if (k < 0) then k = 0 end
+
   return string.rep(' ', k)
 end
 
@@ -57,7 +63,7 @@ rason.stringify = function(o, indent)
   local new_line = true
   local closing_bracket = false
 
-  local s = ''
+  local s = indentify(indent)
 
   -- Lexer is an array of tokens, so a table containing
   -- tables which consist of a single key-val pairs
@@ -77,7 +83,7 @@ rason.stringify = function(o, indent)
         not contains_one_lexeme(index, o)
       ) then
         new_line = true
-        indent = indent + 2
+        indent = indent + indent_step()
         s = s .. tostring(v) .. '\n' .. indentify(indent)
       else
         closing_bracket = true;
@@ -88,8 +94,7 @@ rason.stringify = function(o, indent)
       new_line = true
 
       if (not closing_bracket) then
-        indent = indent - 2
-        if (indent < 0) then indent = 0 end
+        indent = indent - indent_step()
 
         s = s .. '\n' .. indentify(indent) .. tostring(v)
       else

@@ -19,7 +19,8 @@ end
 local function process()
   local text = get_selected_text()
   local lexed = lexer.lex(text)
-  logger.info('\n' .. rason.stringify(lexed))
+  local initial_indent = vim.fn.cindent('.')
+  logger.info('\n' .. rason.stringify(lexed, initial_indent))
 end
 
 function M.setup()
