@@ -1,6 +1,6 @@
 # rason.nvim
 
-A small Neovim plugin that reformats a visually-selected chunk of text — expanding
+A small Neovim plugin that reformats a visually-selected chunk of text. It expands
 brackets and breaking on delimiters/separators onto new lines with indentation,
 similar to running a one-liner through a pretty-printer. Select a cramped
 function call / object literal / JSON-ish blob, hit a key, get it laid out
