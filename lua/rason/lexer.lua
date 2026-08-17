@@ -1,4 +1,4 @@
-local LEXEME_TYPE = require("jq.lexemes")
+local LEXEME_TYPE = require("rason.lexemes")
 
 local lexer = {}
 local index = 1

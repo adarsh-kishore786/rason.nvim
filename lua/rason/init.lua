@@ -1,6 +1,6 @@
-local lexer = require("jq.lexer")
-local rason = require("jq.rason")
-local logger = require("jq.logger")
+local lexer = require("rason.lexer")
+local rason = require("rason.rason")
+local logger = require("rason.logger")
 
 local M = {}
 

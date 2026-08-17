@@ -1,6 +1,6 @@
 local rason = {}
 
-local LEXEME_TYPE = require('jq.lexemes')
+local LEXEME_TYPE = require('rason.lexemes')
 
 local indent_step = function ()
   return vim.fn.shiftwidth()
