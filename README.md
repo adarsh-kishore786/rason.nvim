@@ -54,6 +54,3 @@ use {
 1. Select some text in visual mode.
 2. Press `<leader>j`.
 3. The selection is replaced with the reformatted version.
-## License
-
-Not specified in the repository.
