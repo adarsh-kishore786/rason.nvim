@@ -1,6 +1,5 @@
 local lexer = require("rason.lexer")
 local rason = require("rason.rason")
-local logger = require("rason.logger")
 
 local M = {}
 
@@ -62,13 +61,11 @@ local function process()
   local initial_indent = vim.fn.cindent('.')
   local rasonified_str = rason.stringify(lexed, initial_indent)
 
-  logger.info(rasonified_str)
   replace_visual_selection(rasonified_str)
 end
 
 function M.setup()
   vim.keymap.set("x", "<leader>j", function ()
-    logger.clear()
     process()
   end)
 end
